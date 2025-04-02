@@ -27,19 +27,34 @@ async function run() {
     const visitorsCollection = client.db("test").collection("visitors");
 
     //  GET API (Visitor Count Read)
-    app.get("/api/visitor", async (req, res) => {
-      try {
-        const visitor = await visitorsCollection.findOne({ _id: "visitor_counter" });
 
-        if (!visitor) {
-          return res.json({ count: 0 });
+
+
+
+    app.get("/api/visitor", async (req, res) => {
+        try {
+          const visitor = await visitorsCollection.findOne({}, { projection: { count: 1, _id: 0 } }); 
+      
+          res.json({ count: visitor ? visitor.count : 0 }); 
+        } catch (err) {
+          console.error("Error fetching visitor count:", err);
+          res.status(500).json({ message: "Server error" });
         }
-        res.json({ count: visitor.count });
-      } catch (err) {
-        console.error("Error fetching visitor count:", err);
-        res.status(500).json({ message: "Server error" });
-      }
-    });
+      });
+
+    // app.get("/api/visitor", async (req, res) => {
+    //   try {
+    //     const visitor = await visitorsCollection.findOne({ _id: "visitor_counter" });
+
+    //     if (!visitor) {
+    //       return res.json({ count: 0 });
+    //     }
+    //     res.json({ count: visitor.count });
+    //   } catch (err) {
+    //     console.error("Error fetching visitor count:", err);
+    //     res.status(500).json({ message: "Server error" });
+    //   }
+    // });
 
     //  POST API (Increase Visitor Count)
     app.post("/api/visitor/increase", async (req, res) => {

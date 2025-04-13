@@ -39,6 +39,7 @@ async function run() {
 
   const RestaurantMenu=client.db("Restaurant").collection("menu")
   const RestaurantReview=client.db("Restaurant").collection("reviews")
+  const OrderCollection=client.db("Restaurant").collection("order")
 
 
   // get menu 
@@ -50,6 +51,13 @@ async function run() {
   //get review 
   app.get('/review',async(req,res)=>{
     const result=await RestaurantReview.find().toArray();
+    res.send(result)
+  })
+  
+// card post to database
+  app.post("/order", async(req,res)=>{
+    const card=req.body
+    const result=await OrderCollection.insertOne(card)
     res.send(result)
   })
 

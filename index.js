@@ -65,7 +65,9 @@ async function run() {
 
   //get cart from database
   app.get("/orders",async(req,res)=>{
-   const result=await OrderCollection.find().toArray()
+    const email=req.query.email
+    const query={email : email}
+   const result=await OrderCollection.find(query).toArray()
    res.send(result)
   })
     // Send a ping to confirm a successful connection

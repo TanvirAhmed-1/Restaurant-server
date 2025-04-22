@@ -1,7 +1,7 @@
 require('dotenv').config()
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port=process.env.PORT || 5000;
 const app=express()
 
@@ -12,8 +12,8 @@ app.use(express.json())
 
 // pass: RIFFK88n0u3AFQZB
 // user: Restaurant
-const result = process.env.USER_NAME;
-console.log(result);
+// const result = process.env.USER_NAME;
+// console.log(result);
 
 const uri = `mongodb+srv://${process.env.USER_NAME}:${process.env.PASSWORD}@cluster0.0p516.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -40,7 +40,22 @@ async function run() {
   const RestaurantMenu=client.db("Restaurant").collection("menu")
   const RestaurantReview=client.db("Restaurant").collection("reviews")
   const OrderCollection=client.db("Restaurant").collection("order")
+  const paymentCollection=client.db("Restaurant").collection("payment")
 
+//payment post 
+app.post("/payments", async(req,res)=>{
+  const data=req.body
+  const result=await paymentCollection.insertOne(data)
+  res.send(result)
+})
+
+//get payment
+app.get('/payments/:email',async(req,res)=>{
+  const email=req.params.email
+  const query={email:email}
+  const result=await paymentCollection.find(query).toArray();
+  res.send(result)
+})
 
   // get menu 
   app.get('/menu',async(req,res)=>{
@@ -59,8 +74,25 @@ async function run() {
 // cart post to database
   app.post("/order", async(req,res)=>{
     const card=req.body
+    console.log(card)
+    const query = {
+      email: card.email,
+      productId: card.productId
+    };
+    const existing = await OrderCollection.findOne(query);
+    if (existing) {
+      return res.send({ message: "Product already added" });
+    }
     const result=await OrderCollection.insertOne(card)
     res.send(result)
+  })
+
+  //delete order
+  app.delete("/order/delete/:id",async(req,res)=>{
+  const id=req.params.id
+  const query={_id: new ObjectId(id)}
+  const result=await OrderCollection.deleteOne(query)
+  res.send(result)
   })
 
   //get cart from database

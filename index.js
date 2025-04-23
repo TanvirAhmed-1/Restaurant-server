@@ -10,17 +10,9 @@ const app=express()
 app.use(cors())
 app.use(express.json())
 
-// pass: RIFFK88n0u3AFQZB
-// user: Restaurant
-// const result = process.env.USER_NAME;
-// console.log(result);
 
 const uri = `mongodb+srv://${process.env.USER_NAME}:${process.env.PASSWORD}@cluster0.0p516.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
-
- //const uri = "mongodb+srv://Restaurant:RIFFK88n0u3AFQZB@cluster0.0p516.mongodb.net/?appName=Cluster0";
-
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
 
 const client = new MongoClient(uri, {
   serverApi: {

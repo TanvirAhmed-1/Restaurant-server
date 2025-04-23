@@ -51,7 +51,12 @@ app.get('/payments/:email',async(req,res)=>{
 
   // get menu 
   app.get('/menu',async(req,res)=>{
-    const result=await RestaurantMenu.find().toArray();
+    const sort=req.query?.sort
+    let sortQuery={}
+    if(sort==="true"){
+     sortQuery={price: -1}
+    }
+    const result=await RestaurantMenu.find().sort(sortQuery).toArray();
     res.send(result)
   })
 

@@ -63,6 +63,38 @@ app.get('/payments/:email',async(req,res)=>{
     res.send(result)
   })
 
+//post menu
+
+app.post("/menu",async(req,res)=>{
+  const data=req.body
+  const result=await RestaurantMenu.insertOne(data)
+  res.send(result)
+})
+//delete menu
+app.delete("/menu/delete/:id",async(req,res)=>{
+const id=req.params.id
+const query={_id:new ObjectId(id)}
+const result=await RestaurantMenu.deleteOne(query)
+res.send(result)
+})
+
+// update menu item
+app.patch("/menu/update/:id", async (req, res) => {
+  const id = req.params.id;
+  const updateData = req.body;
+
+  const filter = { _id: new ObjectId(id) };
+  const updateDoc = {
+    $set: {
+      name: updateData.name,
+      category: updateData.category,
+      price: updateData.price,
+      recipe: updateData.recipe,
+    },
+  };
+    const result = await RestaurantMenu.updateOne(filter, updateDoc);
+    res.send(result);
+});
 
 
   //get review 
@@ -70,6 +102,7 @@ app.get('/payments/:email',async(req,res)=>{
     const result=await RestaurantReview.find().toArray();
     res.send(result)
   })
+
 
 // cart post to database
   app.post("/order", async(req,res)=>{
